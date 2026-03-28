@@ -12,7 +12,6 @@ version = "0.0.1-SNAPSHOT"
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(24)
-		vendor = JvmVendor.ORACLE
 	}
 }
 
@@ -32,6 +31,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:3.0.2")
 	implementation("tools.jackson.module:jackson-module-kotlin")
+	runtimeOnly("com.h2database:h2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
