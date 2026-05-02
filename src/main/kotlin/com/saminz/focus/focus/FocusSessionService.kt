@@ -53,4 +53,11 @@ class FocusSessionService {
             .filter { it.status == FocusSessionStatus.STOPPED }
             .sortedByDescending { it.endTime }
     }
+
+    // clears in memory session man, reset the id counter back to 1, so every integration test starts from a clean "database"
+    // it'll be change after moving to postgress
+    internal fun resetStateForTests() {
+        sessions.clear()
+        idGenerator.set(1L)
+    }
 }

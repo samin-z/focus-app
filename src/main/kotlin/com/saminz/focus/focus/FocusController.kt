@@ -1,7 +1,6 @@
 package com.saminz.focus.focus
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,6 +23,7 @@ class FocusController(
     }
 
     @PostMapping("/{id}/stop")
+    // PathVariable takes a value from url path and put it in the method parameter
     fun stopFocusSession(@PathVariable id: Long): FocusSessionResponse {
         val session = focusSessionService.stopSession(id)
         // convert internal FocusSession model to API response DTO
@@ -36,21 +36,6 @@ class FocusController(
         // it => each item
         return focusSessionService.getHistory().map { it.toResponse() }
     }
-
-    @ExceptionHandler(IllegalArgumentException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun handleIllegalArgument(ex: IllegalArgumentException): Map<String, String> =
-        mapOf("error" to (ex.message ?: "invalid request"))
-
-    @ExceptionHandler(NoSuchElementException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun handleNotFound(ex: NoSuchElementException): Map<String, String> =
-        mapOf("error" to (ex.message ?: "focus session not found"))
-
-    @ExceptionHandler(IllegalStateException::class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    fun handleIllegalState(ex: IllegalStateException): Map<String, String> =
-        mapOf("error" to (ex.message ?: "invalid focus session state"))
 
     private fun FocusSession.toResponse(): FocusSessionResponse {
         return FocusSessionResponse(
