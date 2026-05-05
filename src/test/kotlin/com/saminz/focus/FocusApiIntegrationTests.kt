@@ -35,20 +35,16 @@ class FocusApiIntegrationTests {
             .uri("/focus/start")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(StartFocusSessionRequest("Reading"))
+
             .exchange()
-            .expectStatus()
-            .isCreated
+
+            .expectStatus().isCreated
             .expectBody()
-            .jsonPath("$.id")
-            .isEqualTo(1)
-            .jsonPath("$.subject")
-            .isEqualTo("Reading")
-            .jsonPath("$.status")
-            .isEqualTo("ACTIVE")
-            .jsonPath("$.endTime")
-            .isEmpty
-            .jsonPath("$.durationSeconds")
-            .isEmpty
+            .jsonPath("$.id").isEqualTo(1)
+            .jsonPath("$.subject").isEqualTo("Reading")
+            .jsonPath("$.status").isEqualTo("ACTIVE")
+            .jsonPath("$.endTime").isEmpty
+            .jsonPath("$.durationSeconds").isEmpty
     }
 
     @Test
@@ -58,11 +54,89 @@ class FocusApiIntegrationTests {
             .uri("/focus/start")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(StartFocusSessionRequest("   "))
+
             .exchange()
-            .expectStatus()
-            .isBadRequest
+
+            .expectStatus().isBadRequest
             .expectBody()
-            .jsonPath("$.error")
-            .isEqualTo("subject can not be empty")
+            .jsonPath("$.error").isEqualTo("subject can not be empty")
+    }
+
+    @Test
+    fun `POST stop then GET history returns stopped session`() {
+        webTestClient
+            .post()
+            .uri("/focus/start")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StartFocusSessionRequest("work"))
+
+            .exchange()
+
+            .expectStatus().isCreated
+
+        webTestClient
+            .post()
+            .uri("/focus/1/stop")
+
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.status").isEqualTo("STOPPED")
+            .jsonPath("$.endTime").exists()
+            .jsonPath("$.durationSeconds").exists()
+
+        webTestClient
+            .get()
+            .uri("/focus/history")
+            
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].subject").isEqualTo("work")
+            .jsonPath("$[0].status").isEqualTo("STOPPED")
+            .jsonPath("$[1]").doesNotExist()
+    }
+
+    @Test
+    fun `POST stop unknown id returns 404`() {
+        webTestClient
+            .post()
+            .uri("/focus/404/stop")
+
+            .exchange()
+
+            .expectStatus().isNotFound
+            .expectBody()
+            .jsonPath("$.error").isEqualTo("focus session not found")
+    }
+
+    @Test
+    fun `POST stop when already stopped returns 409`() {
+        webTestClient
+            .post()
+            .uri("/focus/start")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StartFocusSessionRequest("x"))
+            
+            .exchange()
+            
+            .expectStatus().isCreated
+
+        webTestClient
+            .post()
+            .uri("/focus/1/stop")
+            
+            .exchange()
+            
+            .expectStatus().isOk
+
+        webTestClient
+            .post()
+            .uri("/focus/1/stop")
+            
+            .exchange()
+            .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+            .expectBody()
+            .jsonPath("$.error").isEqualTo("focus session already stopped")
     }
 }
