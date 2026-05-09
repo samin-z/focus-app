@@ -1,22 +1,41 @@
 package com.saminz.focus
 
+import com.saminz.focus.focus.FocusSessionRepository
 import com.saminz.focus.focus.FocusSessionService
 import com.saminz.focus.focus.FocusSessionStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import kotlin.test.assertFailsWith
 
+@SpringBootTest
 class FocusSessionServiceTest {
+    companion object {
+        @JvmStatic
+        @DynamicPropertySource
+        fun postgresProperties(registry: DynamicPropertyRegistry) {
+            PostgresTestContainer.register(registry)
+        }
+    }
 
-    // Tests often use it because frameworks run setup methods (@BeforeEach) after the test object exists, so “create the service here” fits lateinit + assign in setup.
+
+    @Autowired
     private lateinit var service: FocusSessionService
+    @Autowired
+    private lateinit var focusSessionRepository: FocusSessionRepository
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
 
-    // its like setUp in phpunit
     @BeforeEach
-    fun setup() {
-        service = FocusSessionService()
+    fun resetState() {
+        focusSessionRepository.deleteAll()
+        jdbcTemplate.execute("ALTER SEQUENCE focus_sessions_id_seq RESTART WITH 1")
     }
 
     @Test

@@ -1,3 +1,12 @@
 spring:
   application:
     name: focus
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/focus}
+    username: ${SPRING_DATASOURCE_USERNAME:focus}
+    password: ${SPRING_DATASOURCE_PASSWORD:focus}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true

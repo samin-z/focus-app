@@ -24,6 +24,7 @@ extra["sentryVersion"] = "8.27.0"
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
+	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("io.sentry:sentry-spring-boot-4-starter")
@@ -31,7 +32,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:3.0.2")
 	implementation("tools.jackson.module:jackson-module-kotlin")
-	runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.postgresql:postgresql")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")

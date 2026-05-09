@@ -1,30 +1,40 @@
 package com.saminz.focus
 
-import com.saminz.focus.focus.FocusSessionService
+import com.saminz.focus.focus.FocusSessionRepository
 import com.saminz.focus.focus.StartFocusSessionRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 
-@Import(TestcontainersConfiguration::class)
 @SpringBootTest
 @AutoConfigureWebTestClient
 class FocusApiIntegrationTests {
+    companion object {
+        @JvmStatic
+        @DynamicPropertySource
+        fun postgresProperties(registry: DynamicPropertyRegistry) {
+            PostgresTestContainer.register(registry)
+        }
+    }
+
 
     @Autowired private lateinit var webTestClient: WebTestClient
 
-    // builds requests like a real caller would: choose method (GET/POST/…), path, headers, JSON body
-    @Autowired private lateinit var focusSessionService: FocusSessionService
+    @Autowired private lateinit var focusSessionRepository: FocusSessionRepository
+    @Autowired private lateinit var jdbcTemplate: JdbcTemplate
 
     @BeforeEach
     fun resetService() {
-        focusSessionService.resetStateForTests()
+        focusSessionRepository.deleteAll()
+        jdbcTemplate.execute("ALTER SEQUENCE focus_sessions_id_seq RESTART WITH 1")
     }
 
     // exchange actually fire the request and get a response

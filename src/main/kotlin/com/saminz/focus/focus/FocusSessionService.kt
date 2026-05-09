@@ -1,23 +1,21 @@
 package com.saminz.focus.focus
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
 
 @Service
-class FocusSessionService {
-
-    private val idGenerator = AtomicLong(1)
-    private val sessions = ConcurrentHashMap<Long, FocusSession>()
+@Transactional
+class FocusSessionService(
+    private val focusSessionRepository: FocusSessionRepository,
+) {
 
     fun startSession(subject: String): FocusSession {
         val cleanedSubject = subject.trim()
         require(cleanedSubject.isNotEmpty()) { "subject can not be empty" }
 
-        val session = FocusSession(
-            id = idGenerator.getAndIncrement(),
+        val session = FocusSessionEntity(
             subject = cleanedSubject,
             startTime = Instant.now(),
             endTime = null,
@@ -25,12 +23,13 @@ class FocusSessionService {
             status = FocusSessionStatus.ACTIVE,
         )
 
-        sessions[session.id] = session
-        return session
+        return focusSessionRepository.save(session).toModel()
     }
 
     fun stopSession(id: Long): FocusSession {
-        val existingSession = sessions[id] ?: throw NoSuchElementException("focus session not found")
+        val existingSession = focusSessionRepository.findById(id).orElseThrow {
+            NoSuchElementException("focus session not found")
+        }
         if (existingSession.status == FocusSessionStatus.STOPPED) {
             throw IllegalStateException("focus session already stopped")
         }
@@ -44,20 +43,23 @@ class FocusSessionService {
             status = FocusSessionStatus.STOPPED,
         )
 
-        sessions[id] = stoppedSession
-        return stoppedSession
+        return focusSessionRepository.save(stoppedSession).toModel()
     }
 
+    @Transactional(readOnly = true)
     fun getHistory(): List<FocusSession> {
-        return sessions.values
-            .filter { it.status == FocusSessionStatus.STOPPED }
-            .sortedByDescending { it.endTime }
+        return focusSessionRepository.findAllByStatusOrderByEndTimeDesc(FocusSessionStatus.STOPPED)
+            .map { it.toModel() }
     }
 
-    // clears in memory session man, reset the id counter back to 1, so every integration test starts from a clean "database"
-    // it'll be change after moving to postgress
-    internal fun resetStateForTests() {
-        sessions.clear()
-        idGenerator.set(1L)
+    private fun FocusSessionEntity.toModel(): FocusSession {
+        return FocusSession(
+            id = requireNotNull(id),
+            subject = subject,
+            startTime = startTime,
+            endTime = endTime,
+            durationSeconds = durationSeconds,
+            status = status,
+        )
     }
 }
