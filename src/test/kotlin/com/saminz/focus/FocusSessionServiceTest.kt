@@ -56,7 +56,7 @@ class FocusSessionServiceTest {
     }
 
     @Test
-    fun `stopSession updates stored session and history`() {
+    fun `stopSession updates stored session and finished history`() {
         val started = service.startSession("work")
         val stopped = service.stopSession(started.id)
 
@@ -64,14 +64,14 @@ class FocusSessionServiceTest {
         assertTrue(stopped.endTime != null)
         assertTrue(stopped.durationSeconds != null)
 
-        val history = service.getHistory()
-        assertEquals(1, history.size)
-        assertEquals(stopped.id, history[0].id)
-        assertEquals("work", history[0].subject)
+        val finishedHistory = service.getFinishedHistory()
+        assertEquals(1, finishedHistory.size)
+        assertEquals(stopped.id, finishedHistory[0].id)
+        assertEquals("work", finishedHistory[0].subject)
     }
 
     @Test
-    fun `getHistory excludes active sessions and orders by end time descending`() {
+    fun `getFinishedHistory excludes active sessions and orders by end time descending`() {
         val first = service.startSession("first")
         val second = service.startSession("second")
         Thread.sleep(20)
@@ -79,11 +79,11 @@ class FocusSessionServiceTest {
         Thread.sleep(20)
         service.stopSession(second.id)
 
-        val history = service.getHistory()
-        assertEquals(2, history.size)
-        assertEquals(second.id, history[0].id)
-        assertEquals(first.id, history[1].id)
-        assertEquals("second", history[0].subject)
+        val finishedHistory = service.getFinishedHistory()
+        assertEquals(2, finishedHistory.size)
+        assertEquals(second.id, finishedHistory[0].id)
+        assertEquals(first.id, finishedHistory[1].id)
+        assertEquals("second", finishedHistory[0].subject)
     }
 
     @Test

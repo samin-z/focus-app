@@ -30,11 +30,9 @@ class FocusController(
         return session.toResponse()
     }
 
-    @GetMapping("/history")
-    // list is the collection or array like
-    fun getFocusHistory(): List<FocusSessionResponse> {
-        // it => each item
-        return focusSessionService.getHistory().map { it.toResponse() }
+    @GetMapping("/history/finished")
+    fun getFinishedFocusHistory(): List<FocusSessionResponse> {
+        return focusSessionService.getFinishedHistory().map { it.toResponse() }
     }
 
     private fun FocusSession.toResponse(): FocusSessionResponse {

@@ -47,7 +47,7 @@ class FocusSessionService(
     }
 
     @Transactional(readOnly = true)
-    fun getHistory(): List<FocusSession> {
+    fun getFinishedHistory(): List<FocusSession> {
         return focusSessionRepository.findAllByStatusOrderByEndTimeDesc(FocusSessionStatus.STOPPED)
             .map { it.toModel() }
     }

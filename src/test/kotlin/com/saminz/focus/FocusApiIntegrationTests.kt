@@ -73,7 +73,7 @@ class FocusApiIntegrationTests {
     }
 
     @Test
-    fun `POST stop then GET history returns stopped session`() {
+    fun `POST stop then GET finished history returns stopped session`() {
         webTestClient
             .post()
             .uri("/focus/start")
@@ -97,7 +97,7 @@ class FocusApiIntegrationTests {
 
         webTestClient
             .get()
-            .uri("/focus/history")
+            .uri("/focus/history/finished")
             
             .exchange()
             .expectStatus().isOk
