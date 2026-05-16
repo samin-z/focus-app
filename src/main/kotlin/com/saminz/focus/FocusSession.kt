@@ -1,12 +1,17 @@
-package com.saminz.focus.focus
+package com.saminz.focus
 
 import java.time.Instant
 
-data class FocusSessionResponse(
+enum class FocusSessionStatus {
+    ACTIVE,
+    STOPPED,
+}
+
+data class FocusSession(
     val id: Long,
     val subject: String,
     val startTime: Instant,
     val endTime: Instant?,
     val durationSeconds: Long?,
-    val status: String,
+    val status: FocusSessionStatus,
 )

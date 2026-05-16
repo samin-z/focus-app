@@ -1,4 +1,4 @@
-package com.saminz.focus.focus
+package com.saminz.focus
 
 data class StartFocusSessionRequest(
     val subject: String,

@@ -1,4 +1,4 @@
-package com.saminz.focus.focus
+package com.saminz.focus
 
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

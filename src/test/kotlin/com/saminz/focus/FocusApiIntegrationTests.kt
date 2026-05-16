@@ -1,7 +1,7 @@
 package com.saminz.focus
 
-import com.saminz.focus.focus.FocusSessionRepository
-import com.saminz.focus.focus.StartFocusSessionRequest
+import com.saminz.focus.FocusSessionRepository
+import com.saminz.focus.StartFocusSessionRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

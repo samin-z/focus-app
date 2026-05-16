@@ -1,8 +1,8 @@
 package com.saminz.focus
 
-import com.saminz.focus.focus.FocusSessionRepository
-import com.saminz.focus.focus.FocusSessionService
-import com.saminz.focus.focus.FocusSessionStatus
+import com.saminz.focus.FocusSessionRepository
+import com.saminz.focus.FocusSessionService
+import com.saminz.focus.FocusSessionStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

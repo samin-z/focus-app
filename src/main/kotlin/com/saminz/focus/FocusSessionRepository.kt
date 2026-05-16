@@ -1,4 +1,4 @@
-package com.saminz.focus.focus
+package com.saminz.focus
 
 import org.springframework.data.jpa.repository.JpaRepository
 

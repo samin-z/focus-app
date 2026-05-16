@@ -1,4 +1,4 @@
-package com.saminz.focus.focus
+package com.saminz.focus
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

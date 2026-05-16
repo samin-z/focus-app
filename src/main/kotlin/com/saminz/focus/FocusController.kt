@@ -1,4 +1,4 @@
-package com.saminz.focus.focus
+package com.saminz.focus
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
