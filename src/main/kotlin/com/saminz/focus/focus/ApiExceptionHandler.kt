@@ -24,8 +24,6 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(IllegalStateException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    // if not = we can also do it like this
-    fun handleIllegalState(ex: IllegalStateException): ApiErrorResponse {
-        return ApiErrorResponse(ex.message ?: "conflict")
-    }
+    fun handleIllegalState(ex: IllegalStateException): ApiErrorResponse =
+        ApiErrorResponse(ex.message ?: "conflict")
 }

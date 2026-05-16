@@ -30,8 +30,8 @@ class FocusSessionService(
         val existingSession = focusSessionRepository.findById(id).orElseThrow {
             NoSuchElementException("focus session not found")
         }
-        if (existingSession.status == FocusSessionStatus.STOPPED) {
-            throw IllegalStateException("focus session already stopped")
+        check(existingSession.status != FocusSessionStatus.STOPPED) {
+            "focus session already stopped"
         }
 
         val endTime = Instant.now()
