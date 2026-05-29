@@ -1,1 +1,3 @@
+# Not used for local development (PostgreSQL via Homebrew — see README.md).
+# This file is kept for optional Docker Compose workflows only.
 services: {}
