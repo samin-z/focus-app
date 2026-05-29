@@ -73,6 +73,21 @@ class FocusApiIntegrationTests {
     }
 
     @Test
+    fun `POST start empty subject returns 400 with ApiErrorResponse`() {
+        webTestClient
+            .post()
+            .uri("/focus/start")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StartFocusSessionRequest(""))
+
+            .exchange()
+
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("$.error").isEqualTo("subject can not be empty")
+    }
+
+    @Test
     fun `POST stop then GET finished history returns stopped session`() {
         webTestClient
             .post()

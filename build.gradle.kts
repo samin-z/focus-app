@@ -26,6 +26,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("io.sentry:sentry-spring-boot-4-starter")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

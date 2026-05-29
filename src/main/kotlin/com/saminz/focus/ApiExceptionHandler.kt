@@ -4,10 +4,18 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.bind.support.WebExchangeBindException
 
 // this handler is applied to all @RestControllers; maps common exceptions to HTTP status + JSON body.
 @RestControllerAdvice
 class ApiExceptionHandler {
+
+    @ExceptionHandler(WebExchangeBindException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleValidation(ex: WebExchangeBindException): ApiErrorResponse {
+        val message = ex.bindingResult.fieldErrors.firstOrNull()?.defaultMessage ?: "invalid request"
+        return ApiErrorResponse(message)
+    }
 
     @ExceptionHandler(IllegalArgumentException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

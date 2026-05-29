@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -38,7 +39,7 @@ class FocusController(
     )
     @PostMapping("/start")
     @ResponseStatus(HttpStatus.CREATED)
-    fun startFocusSession(@RequestBody request: StartFocusSessionRequest): FocusSessionResponse {
+    fun startFocusSession(@Valid @RequestBody request: StartFocusSessionRequest): FocusSessionResponse {
         val session = focusSessionService.startSession(request.subject)
         return session.toResponse()
     }
