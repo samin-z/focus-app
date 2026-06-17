@@ -4,18 +4,52 @@ REST API for focus sessions: start, stop, and list finished sessions.
 
 **Stack:** Kotlin, Spring Boot 4, WebFlux, JPA, PostgreSQL, Flyway.
 
-This project uses a **local PostgreSQL** database for development. **Docker is not required** to run the app.
+This project uses **PostgreSQL** for development. Pick one setup below.
 
 ---
 
 ## Prerequisites
 
 - Java 24 (see `build.gradle.kts` toolchain)
-- PostgreSQL 16 (Homebrew on macOS is fine)
+- PostgreSQL — via **Docker Compose** or **Homebrew** (pick one)
 
 ---
 
-## Database setup (macOS / Homebrew)
+## Database setup
+
+### Option A — Docker Compose (recommended if you use Docker)
+
+Start Postgres:
+
+```bash
+docker compose up -d
+```
+
+Or run the app and let Spring Boot start the container for you:
+
+```bash
+./gradlew bootRun
+```
+
+(`spring-boot-docker-compose` reads `compose.yaml` and wires the datasource on startup.)
+
+Defaults match `application.yaml`: database `focus`, user `focus`, password `focus`, port `5432`.
+
+Stop the database:
+
+```bash
+docker compose down
+```
+
+Remove data as well:
+
+```bash
+docker compose down -v
+```
+
+**Port conflict:** if Homebrew Postgres is already on `5432`, stop it (`brew services stop postgresql@16`) or only use one setup.
+
+### Option B — Homebrew Postgres (no Docker for the app)
 
 Install and start PostgreSQL:
 
@@ -67,7 +101,7 @@ export SPRING_DATASOURCE_PASSWORD=focus
 ./gradlew bootRun
 ```
 
-If you see `Connection to localhost:5432 refused`, PostgreSQL is not running or the database/user was not created.
+If you see `Connection to localhost:5432 refused`, Postgres is not running (start Docker Compose or Homebrew Postgres).
 
 ---
 

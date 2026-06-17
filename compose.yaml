@@ -1,3 +1,19 @@
-# Not used for local development (PostgreSQL via Homebrew — see README.md).
-# This file is kept for optional Docker Compose workflows only.
-services: {}
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: focus
+      POSTGRES_USER: focus
+      POSTGRES_PASSWORD: focus
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U focus -d focus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - focus_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  focus_postgres_data:
