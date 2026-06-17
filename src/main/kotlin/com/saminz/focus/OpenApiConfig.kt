@@ -15,7 +15,7 @@ class OpenApiConfig {
             .info(
                 Info()
                     .title("Focus API")
-                    .description("Manage focus sessions: start, stop, and list finished sessions.")
+                    .description("Manage focus sessions: start, stop, and list sessions.")
                     .version("v1"),
             )
 }

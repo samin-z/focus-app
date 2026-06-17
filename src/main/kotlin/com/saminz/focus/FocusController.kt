@@ -71,19 +71,19 @@ class FocusController(
     }
 
     @Operation(
-        summary = "List finished focus sessions",
-        description = "Returns stopped sessions ordered by end time (newest first). Active sessions are excluded.",
+        summary = "List focus sessions",
+        description = "Returns active and stopped sessions, ordered by most recent activity (end time for stopped, start time for active).",
     )
     @ApiResponses(
         ApiResponse(
             responseCode = "200",
-            description = "Finished sessions",
+            description = "All sessions",
             content = [Content(array = ArraySchema(schema = Schema(implementation = FocusSessionResponse::class)))],
         ),
     )
     @GetMapping("/history/finished")
-    fun getFinishedFocusHistory(): List<FocusSessionResponse> {
-        return focusSessionService.getFinishedHistory().map { it.toResponse() }
+    fun getFocusHistory(): List<FocusSessionResponse> {
+        return focusSessionService.getHistory().map { it.toResponse() }
     }
 
     private fun FocusSession.toResponse(): FocusSessionResponse {

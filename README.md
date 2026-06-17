@@ -1,6 +1,6 @@
 # Focus API
 
-REST API for focus sessions: start, stop, and list finished sessions.
+REST API for focus sessions: start, stop, and list sessions.
 
 **Stack:** Kotlin, Spring Boot 4, WebFlux, JPA, PostgreSQL, Flyway.
 
@@ -28,10 +28,10 @@ docker compose up -d
 Or run the app and let Spring Boot start the container for you:
 
 ```bash
-./gradlew bootRun
+SPRING_PROFILES_ACTIVE=docker ./gradlew bootRun
 ```
 
-(`spring-boot-docker-compose` reads `compose.yaml` and wires the datasource on startup.)
+(`spring-boot-docker-compose` is enabled only with the `docker` profile.)
 
 Defaults match `application.yaml`: database `focus`, user `focus`, password `focus`, port `5432`.
 
@@ -101,7 +101,19 @@ export SPRING_DATASOURCE_PASSWORD=focus
 ./gradlew bootRun
 ```
 
+Wait until the log shows **`Started FocusApplication`** — only then is the server listening on port 8080.
+
 If you see `Connection to localhost:5432 refused`, Postgres is not running (start Docker Compose or Homebrew Postgres).
+
+### Swagger not loading?
+
+`BUILD SUCCESSFUL` from Gradle does **not** always mean the app is still running. Check the log for errors above that line.
+
+Common fix if you see `No host port mapping found for container port 5432`:
+
+- A leftover Docker Postgres container (often from tests) conflicts with Compose integration.
+- **Homebrew Postgres (default):** use plain `./gradlew bootRun` (Compose integration is off by default).
+- **Docker Compose:** run `docker compose down`, then `docker compose up -d`, then `SPRING_PROFILES_ACTIVE=docker ./gradlew bootRun`.
 
 ---
 
@@ -130,4 +142,4 @@ Integration tests use **Testcontainers** to start PostgreSQL in Docker during th
 |--------|------|-------------|
 | `POST` | `/focus/start` | Start a session |
 | `POST` | `/focus/{id}/stop` | Stop a session |
-| `GET` | `/focus/history/finished` | List stopped sessions (newest first) |
+| `GET` | `/focus/history/finished` | List active and stopped sessions (newest activity first) |

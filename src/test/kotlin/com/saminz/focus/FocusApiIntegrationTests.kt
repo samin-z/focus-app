@@ -88,7 +88,31 @@ class FocusApiIntegrationTests {
     }
 
     @Test
-    fun `POST stop then GET finished history returns stopped session`() {
+    fun `GET history returns active session`() {
+        webTestClient
+            .post()
+            .uri("/focus/start")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StartFocusSessionRequest("reading"))
+
+            .exchange()
+
+            .expectStatus().isCreated
+
+        webTestClient
+            .get()
+            .uri("/focus/history/finished")
+
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].subject").isEqualTo("reading")
+            .jsonPath("$[0].status").isEqualTo("ACTIVE")
+            .jsonPath("$[1]").doesNotExist()
+    }
+
+    @Test
+    fun `POST stop then GET history returns stopped session`() {
         webTestClient
             .post()
             .uri("/focus/start")
