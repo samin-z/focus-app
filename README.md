@@ -142,4 +142,4 @@ Integration tests use **Testcontainers** to start PostgreSQL in Docker during th
 |--------|------|-------------|
 | `POST` | `/focus/start` | Start a session |
 | `POST` | `/focus/{id}/stop` | Stop a session |
-| `GET` | `/focus/history/finished` | List active and stopped sessions (newest activity first) |
+| `GET` | `/focus/history` | List active and stopped sessions (newest activity first) |

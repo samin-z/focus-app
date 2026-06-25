@@ -15,6 +15,6 @@ data class FocusSessionResponse(
     val endTime: Instant?,
     @field:Schema(description = "Duration in seconds; null while active")
     val durationSeconds: Long?,
-    @field:Schema(description = "Session status", example = "ACTIVE", allowableValues = ["ACTIVE", "STOPPED"])
-    val status: String,
+    @field:Schema(description = "Session status", example = "ACTIVE", implementation = FocusSessionStatus::class)
+    val status: FocusSessionStatus,
 )

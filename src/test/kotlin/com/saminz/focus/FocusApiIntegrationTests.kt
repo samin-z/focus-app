@@ -101,7 +101,7 @@ class FocusApiIntegrationTests {
 
         webTestClient
             .get()
-            .uri("/focus/history/finished")
+            .uri("/focus/history")
 
             .exchange()
             .expectStatus().isOk
@@ -136,7 +136,7 @@ class FocusApiIntegrationTests {
 
         webTestClient
             .get()
-            .uri("/focus/history/finished")
+            .uri("/focus/history")
             
             .exchange()
             .expectStatus().isOk

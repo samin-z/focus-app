@@ -81,19 +81,8 @@ class FocusController(
             content = [Content(array = ArraySchema(schema = Schema(implementation = FocusSessionResponse::class)))],
         ),
     )
-    @GetMapping("/history/finished")
+    @GetMapping("/history")
     fun getFocusHistory(): List<FocusSessionResponse> {
         return focusSessionService.getHistory().map { it.toResponse() }
-    }
-
-    private fun FocusSession.toResponse(): FocusSessionResponse {
-        return FocusSessionResponse(
-            id = id,
-            subject = subject,
-            startTime = startTime,
-            endTime = endTime,
-            durationSeconds = durationSeconds,
-            status = status.name,
-        )
     }
 }
