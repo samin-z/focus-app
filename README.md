@@ -126,6 +126,22 @@ With the app running:
 
 ---
 
+## Error monitoring (Sentry)
+
+Sentry is wired via `sentry-spring-boot-4-starter`. By default no DSN is set, so errors are **not** sent until you configure one.
+
+Create a project at [sentry.io](https://sentry.io), copy the DSN, then run:
+
+```bash
+export SENTRY_DSN="https://<key>@o<org>.ingest.sentry.io/<project>"
+export SENTRY_ENVIRONMENT=local
+./gradlew bootRun
+```
+
+Optional: set `SENTRY_TRACES_SAMPLE_RATE=1.0` to enable performance tracing (use a lower value in production).
+
+---
+
 ## Tests
 
 ```bash

@@ -34,8 +34,7 @@ class FocusSessionServiceTest {
 
     @BeforeEach
     fun resetState() {
-        focusSessionRepository.deleteAll()
-        jdbcTemplate.execute("ALTER SEQUENCE focus_sessions_id_seq RESTART WITH 1")
+        FocusSessionDatabaseTestSupport.reset(focusSessionRepository, jdbcTemplate)
     }
 
     @Test

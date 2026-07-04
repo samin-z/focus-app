@@ -33,8 +33,7 @@ class FocusApiIntegrationTests {
 
     @BeforeEach
     fun resetService() {
-        focusSessionRepository.deleteAll()
-        jdbcTemplate.execute("ALTER SEQUENCE focus_sessions_id_seq RESTART WITH 1")
+        FocusSessionDatabaseTestSupport.reset(focusSessionRepository, jdbcTemplate)
     }
 
     // exchange actually fire the request and get a response
