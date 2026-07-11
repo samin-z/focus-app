@@ -1,5 +1,7 @@
 package com.saminz.focus
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -51,11 +53,11 @@ class FocusSessionServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun getHistory(): List<FocusSession> {
-        return focusSessionRepository.findAll()
-            .map { it.toModel() }
-            .sortedByDescending { it.endTime ?: it.startTime }
-            .take(focusProperties.history.maxResults)
+    override fun getHistory(page: Int, size: Int?): Page<FocusSession> {
+        val pageSize = (size ?: focusProperties.history.defaultPageSize)
+            .coerceIn(1, focusProperties.history.maxPageSize)
+        val pageable = PageRequest.of(page.coerceAtLeast(0), pageSize)
+        return focusSessionRepository.findAllOrderByRecentActivity(pageable).map { it.toModel() }
     }
 
     private fun FocusSessionEntity.toModel(): FocusSession {

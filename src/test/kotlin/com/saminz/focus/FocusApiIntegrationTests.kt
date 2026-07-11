@@ -105,9 +105,11 @@ class FocusApiIntegrationTests {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$[0].subject").isEqualTo("reading")
-            .jsonPath("$[0].status").isEqualTo("ACTIVE")
-            .jsonPath("$[1]").doesNotExist()
+            .jsonPath("$.content[0].subject").isEqualTo("reading")
+            .jsonPath("$.content[0].status").isEqualTo("ACTIVE")
+            .jsonPath("$.content[1]").doesNotExist()
+            .jsonPath("$.page").isEqualTo(0)
+            .jsonPath("$.totalElements").isEqualTo(1)
     }
 
     @Test
@@ -140,9 +142,53 @@ class FocusApiIntegrationTests {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$[0].subject").isEqualTo("work")
-            .jsonPath("$[0].status").isEqualTo("STOPPED")
-            .jsonPath("$[1]").doesNotExist()
+            .jsonPath("$.content[0].subject").isEqualTo("work")
+            .jsonPath("$.content[0].status").isEqualTo("STOPPED")
+            .jsonPath("$.content[1]").doesNotExist()
+            .jsonPath("$.page").isEqualTo(0)
+            .jsonPath("$.totalElements").isEqualTo(1)
+    }
+
+    @Test
+    fun `GET history supports page and size query params`() {
+        webTestClient
+            .post()
+            .uri("/focus/start")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StartFocusSessionRequest("first"))
+            .exchange()
+            .expectStatus().isCreated
+
+        webTestClient
+            .post()
+            .uri("/focus/start")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StartFocusSessionRequest("second"))
+            .exchange()
+            .expectStatus().isCreated
+
+        webTestClient
+            .get()
+            .uri("/focus/history?page=0&size=1")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.content.length()").isEqualTo(1)
+            .jsonPath("$.content[0].subject").isEqualTo("second")
+            .jsonPath("$.page").isEqualTo(0)
+            .jsonPath("$.size").isEqualTo(1)
+            .jsonPath("$.totalElements").isEqualTo(2)
+            .jsonPath("$.totalPages").isEqualTo(2)
+
+        webTestClient
+            .get()
+            .uri("/focus/history?page=1&size=1")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.content.length()").isEqualTo(1)
+            .jsonPath("$.content[0].subject").isEqualTo("first")
+            .jsonPath("$.page").isEqualTo(1)
     }
 
     @Test

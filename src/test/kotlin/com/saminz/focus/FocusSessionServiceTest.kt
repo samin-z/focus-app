@@ -64,9 +64,10 @@ class FocusSessionServiceTest {
         assertTrue(stopped.durationSeconds != null)
 
         val history = service.getHistory()
-        assertEquals(1, history.size)
-        assertEquals(stopped.id, history[0].id)
-        assertEquals("work", history[0].subject)
+        assertEquals(1, history.content.size)
+        assertEquals(1, history.totalElements)
+        assertEquals(stopped.id, history.content[0].id)
+        assertEquals("work", history.content[0].subject)
     }
 
     @Test
@@ -77,11 +78,12 @@ class FocusSessionServiceTest {
         service.stopSession(toStop.id)
 
         val history = service.getHistory()
-        assertEquals(2, history.size)
-        assertEquals(toStop.id, history[0].id)
-        assertEquals(FocusSessionStatus.STOPPED, history[0].status)
-        assertEquals(active.id, history[1].id)
-        assertEquals(FocusSessionStatus.ACTIVE, history[1].status)
+        assertEquals(2, history.content.size)
+        assertEquals(2, history.totalElements)
+        assertEquals(toStop.id, history.content[0].id)
+        assertEquals(FocusSessionStatus.STOPPED, history.content[0].status)
+        assertEquals(active.id, history.content[1].id)
+        assertEquals(FocusSessionStatus.ACTIVE, history.content[1].status)
     }
 
     @Test
@@ -94,10 +96,27 @@ class FocusSessionServiceTest {
         service.stopSession(second.id)
 
         val history = service.getHistory()
-        assertEquals(2, history.size)
-        assertEquals(second.id, history[0].id)
-        assertEquals(first.id, history[1].id)
-        assertEquals("second", history[0].subject)
+        assertEquals(2, history.content.size)
+        assertEquals(second.id, history.content[0].id)
+        assertEquals(first.id, history.content[1].id)
+        assertEquals("second", history.content[0].subject)
+    }
+
+    @Test
+    fun `getHistory paginates results`() {
+        service.startSession("a")
+        service.startSession("b")
+        service.startSession("c")
+
+        val page0 = service.getHistory(page = 0, size = 2)
+        assertEquals(2, page0.content.size)
+        assertEquals(3, page0.totalElements)
+        assertEquals(2, page0.totalPages)
+        assertEquals(0, page0.number)
+
+        val page1 = service.getHistory(page = 1, size = 2)
+        assertEquals(1, page1.content.size)
+        assertEquals(1, page1.number)
     }
 
     @Test

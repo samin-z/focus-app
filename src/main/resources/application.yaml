@@ -18,7 +18,8 @@ focus:
   session:
     subject-max-length: 255
   history:
-    max-results: 1000
+    default-page-size: 10
+    max-page-size: 100
 
 sentry:
   dsn: ${SENTRY_DSN:}

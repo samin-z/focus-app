@@ -19,6 +19,10 @@ data class FocusProperties(
 
     data class History(
         @field:Min(1)
-        val maxResults: Int = 1000,
+        @field:Max(500)
+        val defaultPageSize: Int = 10,
+        @field:Min(1)
+        @field:Max(1000)
+        val maxPageSize: Int = 100,
     )
 }

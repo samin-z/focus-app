@@ -1,7 +1,7 @@
 package com.saminz.focus
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -72,17 +73,24 @@ class FocusController(
 
     @Operation(
         summary = "List focus sessions",
-        description = "Returns active and stopped sessions, ordered by most recent activity (end time for stopped, start time for active).",
+        description = "Returns a paginated list of active and stopped sessions, ordered by most recent activity (end time for stopped, start time for active).",
     )
     @ApiResponses(
         ApiResponse(
             responseCode = "200",
-            description = "All sessions",
-            content = [Content(array = ArraySchema(schema = Schema(implementation = FocusSessionResponse::class)))],
+            description = "Paginated session list",
+            content = [Content(schema = Schema(implementation = PagedFocusSessionResponse::class))],
         ),
     )
     @GetMapping("/history")
-    fun getFocusHistory(): List<FocusSessionResponse> {
-        return focusSessionService.getHistory().map { it.toResponse() }
+    fun getFocusHistory(
+        @Parameter(description = "Zero-based page index")
+        @RequestParam(defaultValue = "0")
+        page: Int,
+        @Parameter(description = "Page size (defaults from config, capped at max)")
+        @RequestParam(required = false)
+        size: Int?,
+    ): PagedFocusSessionResponse {
+        return focusSessionService.getHistory(page, size).toPagedResponse()
     }
 }
