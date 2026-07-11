@@ -14,6 +14,12 @@ spring:
   flyway:
     enabled: true
 
+focus:
+  session:
+    subject-max-length: 255
+  history:
+    max-results: 1000
+
 sentry:
   dsn: ${SENTRY_DSN:}
   environment: ${SENTRY_ENVIRONMENT:local}

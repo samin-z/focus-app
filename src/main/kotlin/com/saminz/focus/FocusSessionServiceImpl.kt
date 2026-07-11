@@ -9,11 +9,15 @@ import java.time.temporal.ChronoUnit
 @Transactional
 class FocusSessionServiceImpl(
     private val focusSessionRepository: FocusSessionRepository,
+    private val focusProperties: FocusProperties,
 ) : FocusSessionService {
 
     override fun startSession(subject: String): FocusSession {
         val cleanedSubject = subject.trim()
         require(cleanedSubject.isNotEmpty()) { "subject can not be empty" }
+        require(cleanedSubject.length <= focusProperties.session.subjectMaxLength) {
+            "subject must be at most ${focusProperties.session.subjectMaxLength} characters"
+        }
 
         val session = FocusSessionEntity(
             subject = cleanedSubject,
@@ -51,6 +55,7 @@ class FocusSessionServiceImpl(
         return focusSessionRepository.findAll()
             .map { it.toModel() }
             .sortedByDescending { it.endTime ?: it.startTime }
+            .take(focusProperties.history.maxResults)
     }
 
     private fun FocusSessionEntity.toModel(): FocusSession {
