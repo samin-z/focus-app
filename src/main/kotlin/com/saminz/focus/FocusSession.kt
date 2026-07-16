@@ -1,5 +1,6 @@
 package com.saminz.focus
 
+import java.time.Duration
 import java.time.Instant
 
 data class FocusSession(
@@ -7,6 +8,6 @@ data class FocusSession(
     val subject: String,
     val startTime: Instant,
     val endTime: Instant?,
-    val durationSeconds: Long?,
+    val duration: Duration?,
     val status: FocusSessionStatus,
 )

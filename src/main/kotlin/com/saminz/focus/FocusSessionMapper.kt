@@ -8,7 +8,7 @@ fun FocusSession.toResponse(): FocusSessionResponse {
         subject = subject,
         startTime = startTime,
         endTime = endTime,
-        durationSeconds = durationSeconds,
+        durationSeconds = duration?.toSeconds(),
         status = status,
     )
 }

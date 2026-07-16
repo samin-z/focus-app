@@ -61,7 +61,7 @@ class FocusSessionServiceTest {
 
         assertEquals(FocusSessionStatus.STOPPED, stopped.status)
         assertTrue(stopped.endTime != null)
-        assertTrue(stopped.durationSeconds != null)
+        assertTrue(stopped.duration != null)
 
         val history = service.getHistory()
         assertEquals(1, history.content.size)

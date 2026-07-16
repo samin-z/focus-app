@@ -233,4 +233,19 @@ class FocusApiIntegrationTests {
             .expectBody()
             .jsonPath("$.error").isEqualTo("focus session already stopped")
     }
+
+    @Test
+    fun `GET api-docs returns OpenAPI document for focus endpoints`() {
+        webTestClient
+            .get()
+            .uri("/v3/api-docs")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.info.title").isEqualTo("Focus API")
+            .jsonPath("$.info.version").isEqualTo("v1")
+            .jsonPath("$.paths['/focus/start']").exists()
+            .jsonPath("$.paths['/focus/{id}/stop']").exists()
+            .jsonPath("$.paths['/focus/history']").exists()
+    }
 }

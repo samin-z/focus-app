@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Duration
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @Service
 @Transactional
@@ -41,11 +41,11 @@ class FocusSessionServiceImpl(
         }
 
         val endTime = Instant.now()
-        val durationSeconds = ChronoUnit.SECONDS.between(existingSession.startTime, endTime).coerceAtLeast(0)
+        val duration = Duration.between(existingSession.startTime, endTime).coerceAtLeast(Duration.ZERO)
 
         val stoppedSession = existingSession.copy(
             endTime = endTime,
-            durationSeconds = durationSeconds,
+            durationSeconds = duration.toSeconds(),
             status = FocusSessionStatus.STOPPED,
         )
 
@@ -66,7 +66,7 @@ class FocusSessionServiceImpl(
             subject = subject,
             startTime = startTime,
             endTime = endTime,
-            durationSeconds = durationSeconds,
+            duration = durationSeconds?.let { Duration.ofSeconds(it) },
             status = status,
         )
     }
