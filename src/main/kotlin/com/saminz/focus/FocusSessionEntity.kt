@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import jakarta.persistence.Version
 import java.time.Instant
 
 @Entity
@@ -21,4 +22,6 @@ data class FocusSessionEntity(
     val durationSeconds: Long?,
     @Enumerated(EnumType.STRING)
     val status: FocusSessionStatus,
+    @Version
+    val version: Long = 0,
 )

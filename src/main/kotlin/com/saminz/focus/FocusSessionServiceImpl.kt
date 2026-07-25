@@ -2,6 +2,7 @@ package com.saminz.focus
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
@@ -49,7 +50,11 @@ class FocusSessionServiceImpl(
             status = FocusSessionStatus.STOPPED,
         )
 
-        return focusSessionRepository.save(stoppedSession).toModel()
+        return try {
+            focusSessionRepository.saveAndFlush(stoppedSession).toModel()
+        } catch (_: ObjectOptimisticLockingFailureException) {
+            throw IllegalStateException("focus session already stopped")
+        }
     }
 
     @Transactional(readOnly = true)

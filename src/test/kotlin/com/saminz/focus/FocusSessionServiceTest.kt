@@ -12,6 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import java.util.Collections
+import java.util.concurrent.CyclicBarrier
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
 
 @SpringBootTest
@@ -134,5 +138,33 @@ class FocusSessionServiceTest {
         assertFailsWith<IllegalStateException> {
             service.stopSession(started.id)
         }
+    }
+
+    @Test
+    fun `concurrent stopSession allows only one success`() {
+        val started = service.startSession("race")
+        val executor = Executors.newFixedThreadPool(2)
+        val barrier = CyclicBarrier(2)
+        val results = Collections.synchronizedList(mutableListOf<Result<FocusSession>>())
+
+        try {
+            val futures = List(2) {
+                executor.submit {
+                    barrier.await()
+                    results += runCatching { service.stopSession(started.id) }
+                }
+            }
+            futures.forEach { it.get(5, TimeUnit.SECONDS) }
+        } finally {
+            executor.shutdownNow()
+        }
+
+        assertEquals(1, results.count { it.isSuccess })
+        assertEquals(1, results.count { it.isFailure })
+        assertTrue(results.single { it.isFailure }.exceptionOrNull() is IllegalStateException)
+
+        val stored = focusSessionRepository.findById(started.id).orElseThrow()
+        assertEquals(FocusSessionStatus.STOPPED, stored.status)
+        assertTrue(stored.endTime != null)
     }
 }
