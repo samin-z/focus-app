@@ -12,16 +12,16 @@ import java.time.Instant
 
 @Entity
 @Table(name = "focus_sessions")
-data class FocusSessionEntity(
+class FocusSessionEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val subject: String,
     val startTime: Instant,
-    val endTime: Instant?,
-    val durationSeconds: Long?,
+    var endTime: Instant? = null,
+    var durationSeconds: Long? = null,
     @Enumerated(EnumType.STRING)
-    val status: FocusSessionStatus,
+    var status: FocusSessionStatus = FocusSessionStatus.ACTIVE,
     @Version
-    val version: Long = 0,
+    var version: Long = 0,
 )

@@ -16,18 +16,11 @@ class FocusSessionServiceImpl(
 ) : FocusSessionService {
 
     override fun startSession(subject: String): FocusSession {
-        val cleanedSubject = subject.trim()
-        require(cleanedSubject.isNotEmpty()) { "subject can not be empty" }
-        require(cleanedSubject.length <= focusProperties.session.subjectMaxLength) {
-            "subject must be at most ${focusProperties.session.subjectMaxLength} characters"
-        }
+        val cleanedSubject = SubjectValidation.clean(subject, focusProperties.session.subjectMaxLength)
 
         val session = FocusSessionEntity(
             subject = cleanedSubject,
             startTime = Instant.now(),
-            endTime = null,
-            durationSeconds = null,
-            status = FocusSessionStatus.ACTIVE,
         )
 
         return focusSessionRepository.save(session).toModel()
@@ -44,14 +37,12 @@ class FocusSessionServiceImpl(
         val endTime = Instant.now()
         val duration = Duration.between(existingSession.startTime, endTime).coerceAtLeast(Duration.ZERO)
 
-        val stoppedSession = existingSession.copy(
-            endTime = endTime,
-            durationSeconds = duration.toSeconds(),
-            status = FocusSessionStatus.STOPPED,
-        )
+        existingSession.endTime = endTime
+        existingSession.durationSeconds = duration.toSeconds()
+        existingSession.status = FocusSessionStatus.STOPPED
 
         return try {
-            focusSessionRepository.saveAndFlush(stoppedSession).toModel()
+            focusSessionRepository.saveAndFlush(existingSession).toModel()
         } catch (_: ObjectOptimisticLockingFailureException) {
             throw IllegalStateException("focus session already stopped")
         }

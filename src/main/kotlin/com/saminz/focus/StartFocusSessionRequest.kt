@@ -6,8 +6,11 @@ import jakarta.validation.constraints.Size
 
 @Schema(description = "Request body to start a new focus session")
 data class StartFocusSessionRequest(
-    @field:NotBlank(message = "subject can not be empty")
-    @field:Size(max = 255, message = "subject must be at most 255 characters")
+    @field:NotBlank(message = SubjectValidation.EMPTY_MESSAGE)
+    @field:Size(
+        max = SubjectValidation.MAX_LENGTH,
+        message = "subject must be at most ${SubjectValidation.MAX_LENGTH} characters",
+    )
     @field:Schema(description = "What you are focusing on", example = "Reading")
     val subject: String,
 )

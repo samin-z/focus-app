@@ -14,7 +14,7 @@ data class FocusProperties(
     data class Session(
         @field:Min(1)
         @field:Max(500)
-        val subjectMaxLength: Int = 255,
+        val subjectMaxLength: Int = SubjectValidation.MAX_LENGTH,
     )
 
     data class History(
